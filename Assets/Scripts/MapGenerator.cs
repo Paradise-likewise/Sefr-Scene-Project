@@ -9,6 +9,7 @@ public class MapGenerator : MonoBehaviour
     public int mapSizeX = 100, mapSizeZ = 100;
     int cellCount;
 
+
     CellPriorityQueue searchFrontier;
     int searchFrontierPhase = 0;
 
@@ -49,6 +50,10 @@ public class MapGenerator : MonoBehaviour
 
     [Range(0.1f, 0.6f)]
     public float growFeatureProbability = 0.1f;
+
+
+    Cell birthCell;
+    List<Cell> cellList = new List<Cell>();
 
     private void Start()
     {
@@ -266,6 +271,48 @@ public class MapGenerator : MonoBehaviour
 
             neighbor_n = grid.GetCell(middle, curZ + 1);
         }
+        genCellPos(middle, 2);
+
+        // test for debug
+        getBirthPos();
+        getEnemyPos();
+    }
+
+    void genCellPos(int bx, int bz)
+    {
+        birthCell = grid.GetCell(bx, bz);
+        for (int i = 0; i < 10; i++) {
+            Cell newCell = GetRandomCell();
+            bool isNew = true;
+            foreach (Cell c in cellList) {
+                if (c == newCell) {
+                    isNew = false;
+                    break;
+                }
+            }
+            if (isNew) {
+                cellList.Add(GetRandomCell());
+            }
+            else {
+                i--;
+            }
+        }
+    }
+
+    public Vector3 getBirthPos()
+    {
+        Debug.Log("birth pos: " + birthCell.Position);
+        return birthCell.Position;
+    }
+
+    public List<Vector3> getEnemyPos()
+    {
+        List<Vector3> posList = new List<Vector3>();
+        foreach (Cell ec in cellList) {
+            Debug.Log("enemy pos: " + ec.Position);
+            posList.Add(ec.Position);
+        }
+        return posList;
     }
 
     void SetWall(int x, int z)
